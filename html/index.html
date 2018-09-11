@@ -101,18 +101,28 @@
 		<script>
 			// get dom references and setup epoch/d3 charts
 			var nodeSessions = $('#sessionsPerMinute');
-			nodeSessions.on('click', function(){
-				console.log('nodeSessions click');
+			nodeSessions.on('click', function() {
+				console.log('nodeSessions click', arguments);
 			});
 
-			var sessions = nodeSessions.epoch( {
+			var sessions = nodeSessions.epoch({
 				type: 'time.area', axes: ['left', 'bottom', 'right'],
-				data: [ { values: [ { time: Date.now()/1000, y: 0 } ] } ],
-			} );
+				data: [{
+					values: [{
+						time: Date.now()/1000, y: 0
+					}]
+				}],
+			});
 
-			var averageSessionLength = $( '#averageSessionLength' ).epoch( { type: 'time.gauge' } );
-			var databaseRequestsPerSec = $( '#databaseRequestsPerSec' ).epoch( { type: 'time.gauge' } );
-			var other = $( '#other' ).epoch( { type: 'time.gauge' } );
+			var averageSessionLength = $('#averageSessionLength').epoch({
+					type: 'time.gauge'
+				});
+			var databaseRequestsPerSec = $('#databaseRequestsPerSec').epoch({
+					type: 'time.gauge'
+				});
+			var other = $('#other').epoch({
+					type: 'time.gauge'
+				});
 			
 			// setup Socket.io listener
 			var socket = io(); 
@@ -124,11 +134,15 @@
 				//var str = JSON.stringify(msg);
 				//$('#messages').append($('<li>').text(str));
 
-				sessions.push( [ { time: Date.now()/1000, y: msg.sessionsPerMinute } ] );
+				sessions.push([{
+						time: Date.now()/1000, y: msg.sessionsPerMinute
+					}]);
 
 				averageSessionLength.update( msg.averageSessionLength / 100000 || 0 );
+
 				databaseRequestsPerSec.update( msg.databaseRequestsPerSec / 100000 || 0 );
-				other.update( msg.other / 100000 || 0 );
+
+				other.update(msg.other / 100000 || 0);
 			});
 		</script>
 	</body>
